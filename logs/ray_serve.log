@@ -1,0 +1,15 @@
+nohup: ignoring input
+2025-10-26 23:07:37,896	INFO worker.py:2004 -- Started a local Ray instance. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+/home/sophie/.local/lib/python3.10/site-packages/ray/_private/worker.py:2052: FutureWarning: Tip: In future versions of Ray, Ray will no longer override accelerator visible devices env var if num_gpus=0 or num_gpus=None (default). To enable this behavior and turn off this error message, set RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0
+  warnings.warn(
+[36m(ProxyActor pid=153485)[0m INFO 2025-10-26 23:07:40,725 proxy 172.22.234.117 -- Proxy starting on node 1d88b474108fed0cd18518b1b7835fe1c52d2eaafd64f98f7284c8a7 (HTTP port: 8002).
+INFO 2025-10-26 23:07:40,779 serve 152737 -- Started Serve in namespace "serve".
+INFO 2025-10-26 23:07:40,787 serve 152737 -- Connecting to existing Serve app in namespace "serve". New http options will not be applied.
+WARNING 2025-10-26 23:07:40,787 serve 152737 -- The new client HTTP config differs from the existing one in the following fields: ['port', 'location']. The new HTTP config is ignored.
+[36m(ServeController pid=153483)[0m INFO 2025-10-26 23:07:40,817 controller 153483 -- Deploying new version of Deployment(name='InferenceService', app='default') (initial target replicas: 1).
+[36m(ProxyActor pid=153485)[0m INFO 2025-10-26 23:07:40,774 proxy 172.22.234.117 -- Got updated endpoints: {}.
+[36m(ProxyActor pid=153485)[0m INFO 2025-10-26 23:07:40,820 proxy 172.22.234.117 -- Got updated endpoints: {Deployment(name='InferenceService', app='default'): EndpointInfo(route='/inference', app_is_cross_language=False)}.
+[36m(ProxyActor pid=153485)[0m INFO 2025-10-26 23:07:40,868 proxy 172.22.234.117 -- Started <ray.serve._private.router.SharedRouterLongPollClient object at 0x7a231c6d77f0>.
+[36m(ServeController pid=153483)[0m INFO 2025-10-26 23:07:40,921 controller 153483 -- Adding 1 replica to Deployment(name='InferenceService', app='default').
+[36m(ServeController pid=153483)[0m INFO 2025-10-26 23:07:40,921 controller 153483 -- Assigned rank 0 to new replica 7gj94x3g during startup
+INFO 2025-10-26 23:07:42,905 serve 152737 -- Application 'default' is ready at http://127.0.0.1:8002/inference.
