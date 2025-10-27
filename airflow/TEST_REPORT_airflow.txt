@@ -1,12 +1,12 @@
-🧪 TEST REPORT: Airflow DAG Execution
+ TEST REPORT: Airflow DAG Execution
 
 • Project: hybrid-mlops-demo
 • DAGs: train_pipeline, hybrid_train_and_infer
-• Status: ✅ DAG 등록 완료
+• Status:  DAG 등록 완료
 • UI: http://localhost:8080
 • MLflow UI: http://localhost:5000
 • Trigger Test: PASS
-• Owner: SophieOps 🧑‍🚀
+• Owner: daeun-ops 
 
 [2025-10-28] Logged by Sophie for commit tracking.
 
