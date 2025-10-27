@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  ray-inference:
+    build:
+      context: ./ray_inference
+    image: daeun/ray-inference:cu116
+    container_name: ray-inference
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    environment:
+      - RAY_memory_monitor_refresh_ms=0
+    restart: unless-stopped
+
