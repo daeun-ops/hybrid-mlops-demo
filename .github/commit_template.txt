@@ -1,0 +1,19 @@
+# [타입]: [변경 요약]
+# 예: feat: add Airflow DAG for MLflow tracking
+#
+# 타입 (하나 선택):
+#   feat     : 새로운 기능 추가
+#   fix      : 버그 수정
+#   docs     : 문서 수정
+#   style    : 포맷팅, 세미콜론 누락 등 코드 변경 없음
+#   refactor : 코드 리팩토링 (기능 변경 없음)
+#   test     : 테스트 추가 또는 수정
+#   chore    : 빌드, 설정 파일, 기타 유지보수
+#
+# 본문 (선택):
+# - 왜 이 변경을 했는지 설명
+# - 관련된 이슈 번호를 언급 (#123)
+#
+# 꼬리말 (선택):
+# BREAKING CHANGE: 호환성 깨지는 변경사항
+# Closes #123, Resolves #456
