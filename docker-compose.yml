@@ -1,18 +1,21 @@
-version: "3.8"
 services:
   ray-inference:
     build:
       context: ./ray_inference
     image: daeun/ray-inference:cu116
     container_name: ray-inference
+    shm_size: "1gb"
     ports:
       - "8000:8000"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - RAY_memory_monitor_refresh_ms=0
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: ["gpu"]
-    environment:
-      - RAY_memory_monitor_refresh_ms=0
+            - driver: nvidia
+              capabilities: [gpu]
     restart: unless-stopped
 

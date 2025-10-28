@@ -10,8 +10,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pip3 install --no-cache-dir --upgrade pip && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install --no-cache-dir "ray[serve]==2.9.3" fastapi uvicorn prometheus-client \
- && pip3 install --no-cache-dir torch==1.13.1+cu116 -f https://download.pytorch.org/whl/torch_stable.html
+# Ray Serve + API + Metrics
+RUN pip3 install --no-cache-dir "ray[serve]==2.9.3" fastapi uvicorn prometheus-client
+
+# PyTorch (CUDA 11.6)
+RUN pip3 install --no-cache-dir \
+  torch==1.13.1+cu116 -f https://download.pytorch.org/whl/torch_stable.html
 
 WORKDIR /app
 COPY serve_app.py /app/serve_app.py
