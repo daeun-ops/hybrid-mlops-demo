@@ -8,3 +8,4 @@ __pycache__/
 # Environment & temp files
 .env
 *.log
+*.pyc
