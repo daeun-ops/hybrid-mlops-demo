@@ -7,7 +7,7 @@ from ray import serve
 
 api = FastAPI(title="Hybrid Ray Inference")
 
-@serve.deployment
+@serve.deployment(ray_actor_options={"num_gpus": 1})(ray_actor_options={"num_gpus": 1})
 @serve.ingress(api)
 class InferenceService:
     def __init__(self):
@@ -36,12 +36,13 @@ class InferenceService:
             "inference_requests_total{service=\"ray-inference\"} 0\n"
         )
 
-# 신규 Serve API
-app = InferenceService.bind()
-serve.run(app, route_prefix="/inference")
+if __name__ == "__main__":
+    # ✅ HTTP 서버는 여기서 '딱 한 번' 명시적으로 시작
+    serve.start(http_options={"host": "0.0.0.0", "port": 8000})
+    # ✅ 애플리케이션은 host/port 없이 run
+    app = InferenceService.bind()
+    serve.run(app, route_prefix="/inference")
 
-# ✅ 컨테이너 프로세스 유지 (중요!)
-print("[serve_app] Ray Serve app is up. Sleeping forever to keep process alive...")
-while True:
-    time.sleep(3600)
-
+    print("[serve_app] Ray Serve up on 0.0.0.0:8000 /inference — holding process…")
+    while True:
+        time.sleep(3600)
