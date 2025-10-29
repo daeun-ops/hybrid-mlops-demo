@@ -7,7 +7,7 @@ from ray import serve
 
 api = FastAPI(title="Hybrid Ray Inference")
 
-@serve.deployment(ray_actor_options={"num_gpus": 1})
+@serve.deployment(ray_actor_options={"num_gpus": 1})(ray_actor_options={"num_gpus": 1})
 @serve.ingress(api)
 class InferenceService:
     def __init__(self):
