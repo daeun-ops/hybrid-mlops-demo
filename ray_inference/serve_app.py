@@ -3,7 +3,6 @@ from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTEN
 from ray import serve
 import torch, time
 
-# 단일노드/WSL 친화 설정 (Ray HTTP 서버 바인드 명시)
 serve.start(
     detached=True,
     http_options={"host": "0.0.0.0", "port": 8000},
@@ -16,10 +15,8 @@ serve.start(
 )
 class InferenceService:
     def __init__(self):
-        # FastAPI 인스턴스를 클래스 내부에서 생성 → 직렬화 안전
         app = FastAPI()
 
-        # 전역 금지. 인스턴스 필드로 생성해서 직렬화 이슈 회피
         self.req_total = Counter("inference_requests_total", "Total inference requests")
         self.req_lat   = Histogram("inference_request_latency_seconds", "Inference latency (s)")
         self.device_g  = Gauge("inference_device_is_cuda", "1=cuda, 0=cpu")
@@ -33,7 +30,6 @@ class InferenceService:
         self.device_g.set(1 if self.device == "cuda" else 0)
         print(f"[INFO] Using device: {self.device}")
 
-        # 데모용 경량 모델
         self.model = torch.nn.Linear(4, 2).to(self.device)
         self.model.eval()
 
@@ -56,12 +52,9 @@ class InferenceService:
             self.req_lat.observe(time.time() - t0)
             return {"device": self.device, "output": y.tolist()}
 
-        # ASGI 핸들러 저장
         self._app = app
 
-    # Ray Serve 가 ASGI 를 호출할 수 있게 래핑
     async def __call__(self, scope, receive, send):
         await self._app(scope, receive, send)
 
-# 배포
 InferenceService.deploy()
