@@ -12,17 +12,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN python3 -m pip install --upgrade pip setuptools wheel
 
-# PyTorch(CUDA 11.6) — 공식 extra-index-url 방식
+# PyTorch(CUDA 11.6)
 RUN pip install --no-cache-dir \
     torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 \
     --extra-index-url https://download.pytorch.org/whl/cu116
 
-# Ray Serve & FastAPI
+# ✅ Ray Serve와 호환되는 FastAPI/uvicorn 버전 고정
 RUN pip install --no-cache-dir \
-    "ray[serve]==2.9.3" fastapi==0.115.0 uvicorn==0.30.6
+    "ray[serve]==2.9.3" \
+    fastapi==0.108.0 \
+    uvicorn==0.23.2
 
 WORKDIR /app
 COPY serve_app.py /app/serve_app.py
 
 EXPOSE 8000
 CMD ["python3", "serve_app.py"]
+

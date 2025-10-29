@@ -4,7 +4,7 @@ services:
       context: ./ray_inference
     image: daeun/ray-inference:cu116
     container_name: ray-inference
-    shm_size: "1gb"
+    shm_size: "2gb"
     ports:
       - "8000:8000"
     environment:
