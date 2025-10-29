@@ -1,42 +1,47 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Body
+from fastapi.responses import PlainTextResponse
+import torch
+import time
+
 from ray import serve
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
-import torch, time
 
-app = FastAPI()
-serve.start(detached=True)
+api = FastAPI(title="Hybrid Ray Inference")
 
-REQ_TOTAL = Counter("inference_requests_total", "Total inference requests")
-REQ_LAT   = Histogram("inference_request_latency_seconds", "Inference latency (s)")
-
-@app.get("/metrics")
-def metrics():
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
-
-@serve.deployment(route_prefix="/inference")
-@serve.ingress(app)
+@serve.deployment
+@serve.ingress(api)
 class InferenceService:
     def __init__(self):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"[INFO] Using device: {self.device}")
-        self.model = torch.nn.Linear(4, 2).to(self.device)
-        self.model.eval()
 
-    @app.post("/")
-    def infer(self, payload: dict):
-        REQ_TOTAL.inc()
-        start = time.time()
-        x = payload.get("input", [1.0, 2.0, 3.0, 4.0])
-        x = torch.tensor(x, dtype=torch.float32, device=self.device)
-        with torch.no_grad():
-            y = self.model(x)
-        REQ_LAT.observe(time.time() - start)
-        return {"device": self.device, "output": y.tolist()}
+    @api.get("/healthz")
+    async def healthz(self):
+        return {"ok": True, "device": self.device}
 
-# 간단 헬스체크
-@app.get("/healthz")
-def healthz():
-    return {"ok": True}
+    @api.post("/")
+    async def infer(self, payload: dict = Body(...)):
+        xs = payload.get("input", [])
+        if not isinstance(xs, list):
+            return {"error": "input must be a list"}
+        try:
+            out = [float(x) * 2 for x in xs]
+        except Exception:
+            return {"error": "input must be a list of numbers"}
+        return {"device": self.device, "output": out}
 
-InferenceService.deploy()
+    @api.get("/metrics")
+    async def metrics(self):
+        return PlainTextResponse(
+            "# HELP inference_requests_total Total inference requests\n"
+            "# TYPE inference_requests_total counter\n"
+            "inference_requests_total{service=\"ray-inference\"} 0\n"
+        )
+
+# 신규 Serve API
+app = InferenceService.bind()
+serve.run(app, route_prefix="/inference")
+
+# ✅ 컨테이너 프로세스 유지 (중요!)
+print("[serve_app] Ray Serve app is up. Sleeping forever to keep process alive...")
+while True:
+    time.sleep(3600)
 
