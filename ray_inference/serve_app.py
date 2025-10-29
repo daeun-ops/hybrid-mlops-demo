@@ -3,7 +3,7 @@ from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTEN
 from ray import serve
 import torch, time
 
-# ✅ Ray Serve: 단일 노드/WSL 안정화 옵션
+# 단일노드/WSL 친화 설정 (Ray HTTP 서버 바인드 명시)
 serve.start(
     detached=True,
     http_options={"host": "0.0.0.0", "port": 8000},
@@ -16,15 +16,14 @@ serve.start(
 )
 class InferenceService:
     def __init__(self):
-        # FastAPI 인스턴스는 인스턴스 내부에 생성 (직렬화 안전)
+        # FastAPI 인스턴스를 클래스 내부에서 생성 → 직렬화 안전
         app = FastAPI()
 
-        # ✅ 메트릭은 전역 금지! 인스턴스 필드로 생성
+        # 전역 금지. 인스턴스 필드로 생성해서 직렬화 이슈 회피
         self.req_total = Counter("inference_requests_total", "Total inference requests")
         self.req_lat   = Histogram("inference_request_latency_seconds", "Inference latency (s)")
         self.device_g  = Gauge("inference_device_is_cuda", "1=cuda, 0=cpu")
 
-        # 디바이스/모델 준비
         try:
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
         except Exception as e:
@@ -34,10 +33,10 @@ class InferenceService:
         self.device_g.set(1 if self.device == "cuda" else 0)
         print(f"[INFO] Using device: {self.device}")
 
+        # 데모용 경량 모델
         self.model = torch.nn.Linear(4, 2).to(self.device)
         self.model.eval()
 
-        # ---- 라우트: 전역 변수 캡처 금지 → self만 캡처 ----
         @app.get("/healthz")
         def _healthz():
             return {"ok": True}
@@ -57,13 +56,12 @@ class InferenceService:
             self.req_lat.observe(time.time() - t0)
             return {"device": self.device, "output": y.tolist()}
 
-        # ASGI 앱 보관
+        # ASGI 핸들러 저장
         self._app = app
 
-    # ASGI 래퍼
+    # Ray Serve 가 ASGI 를 호출할 수 있게 래핑
     async def __call__(self, scope, receive, send):
         await self._app(scope, receive, send)
 
 # 배포
 InferenceService.deploy()
-
