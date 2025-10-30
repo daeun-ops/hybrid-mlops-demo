@@ -1,4 +1,4 @@
-.PHONY: up down infer health gpu logs restart clean ps
+.PHONY: up down infer health gpu logs restart clean ps metrics
 
 up:
 	docker compose up -d --build ray-inference
@@ -26,6 +26,9 @@ if torch.cuda.is_available():
     print("device_name:", torch.cuda.get_device_name(0))
 PY
 	@docker exec -it ray-inference bash -lc "ray status" || true
+
+metrics:
+	@curl -s http://127.0.0.1:8000/inference/metrics | head -n 20
 
 logs:
 	docker logs -n 200 -f ray-inference
