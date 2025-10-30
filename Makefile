@@ -2,9 +2,9 @@
 
 up:
 	docker compose up -d --build ray-inference
-	@echo "Waiting for health..."; \
+	@echo "⏳ Waiting for health..."; \
 	for i in {1..45}; do s=$$(docker inspect -f '{{.State.Health.Status}}' ray-inference 2>/dev/null || echo unknown); \
-	  if [ "$$s" = "healthy" ]; then echo "Container is healthy."; break; fi; sleep 2; done
+	  if [ "$$s" = "healthy" ]; then echo "✅ Container is healthy."; break; fi; sleep 2; done
 	@$(MAKE) infer
 
 down:
