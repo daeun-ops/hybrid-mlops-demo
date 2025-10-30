@@ -1,15 +1,28 @@
-version: "3.8"
 services:
   ray-inference:
+    container_name: ray-inference
     build:
       context: ./ray_inference
+      dockerfile: Dockerfile
     image: daeun/ray-inference:cu116
-    container_name: ray-inference
     ports:
-      - "8000:8000"
-    shm_size: "2g"                # Ray object store 경고 제거
-    gpus: all                     # ✅ Compose 최신 문법: GPU 전체 할당
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-    restart: unless-stopped
+    - target: 8000
+      published: '8000'
+      protocol: tcp
+      mode: ingress
+    gpus:
+    - count: -1
+    shm_size: 8g
+    healthcheck:
+      test:
+      - CMD
+      - curl
+      - -sf
+      - http://127.0.0.1:8000/inference/healthz
+      interval: 5s
+      timeout: 2s
+      retries: 60
+      start_period: 30s
+networks:
+  default:
+    name: hybrid-mlops-demo_default
