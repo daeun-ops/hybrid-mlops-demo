@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: 'ray-inference'
+    metrics_path: /inference/metrics
+    static_configs:
+      - targets: ['ray-inference:8000']
