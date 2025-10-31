@@ -1,0 +1,22 @@
+[2025-10-31T10:19:00.649+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-31T10:19:00.678+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: s3_camera_to_infer.call_ray_infer manual__2025-10-31T10:18:58+00:00 [queued]>
+[2025-10-31T10:19:00.687+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: s3_camera_to_infer.call_ray_infer manual__2025-10-31T10:18:58+00:00 [queued]>
+[2025-10-31T10:19:00.687+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-31T10:19:00.701+0000] {taskinstance.py:2330} INFO - Executing <Task(BashOperator): call_ray_infer> on 2025-10-31 10:18:58+00:00
+[2025-10-31T10:19:00.708+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 's3_camera_to_infer', 'call_ray_infer', 'manual__2025-10-31T10:18:58+00:00', '--job-id', '11', '--raw', '--subdir', 'DAGS_FOLDER/s3_camera_to_infer.py', '--cfg-path', '/tmp/tmp16e83jpp']
+[2025-10-31T10:19:00.711+0000] {standard_task_runner.py:91} INFO - Job 11: Subtask call_ray_infer
+[2025-10-31T10:19:00.711+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=912) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-31T10:19:00.712+0000] {standard_task_runner.py:63} INFO - Started process 913 to run task
+[2025-10-31T10:19:00.770+0000] {task_command.py:426} INFO - Running <TaskInstance: s3_camera_to_infer.call_ray_infer manual__2025-10-31T10:18:58+00:00 [running]> on host 32f37ff5877d
+[2025-10-31T10:19:00.876+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='sophie' AIRFLOW_CTX_DAG_ID='s3_camera_to_infer' AIRFLOW_CTX_TASK_ID='call_ray_infer' AIRFLOW_CTX_EXECUTION_DATE='2025-10-31T10:18:58+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-31T10:18:58+00:00'
+[2025-10-31T10:19:00.877+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-31T10:19:00.894+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-10-31T10:19:00.895+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'curl -s -X POST http://ray-inference:8000/inference/ -H \'Content-Type: application/json\' --data \'{"input":[10,20,30,40]}\'']
+[2025-10-31T10:19:00.905+0000] {subprocess.py:86} INFO - Output:
+[2025-10-31T10:19:00.930+0000] {subprocess.py:93} INFO - {"device":"cuda","output":[20.0,40.0,60.0,80.0],"latency_sec":4e-06}
+[2025-10-31T10:19:00.931+0000] {subprocess.py:97} INFO - Command exited with return code 0
+[2025-10-31T10:19:00.932+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-31T10:19:00.963+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=s3_camera_to_infer, task_id=call_ray_infer, run_id=manual__2025-10-31T10:18:58+00:00, execution_date=20251031T101858, start_date=20251031T101900, end_date=20251031T101900
+[2025-10-31T10:19:01.009+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-31T10:19:01.027+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-10-31T10:19:01.029+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

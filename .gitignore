@@ -1,11 +1,8 @@
-# Airflow logs
-airflow/logs/
-
-# Python caches
+.env
+.env.*
+!/.env.example
+data/
+images/
 __pycache__/
 *.pyc
-
-# Environment & temp files
-.env
-*.log
-*.pyc
+.DS_Store
