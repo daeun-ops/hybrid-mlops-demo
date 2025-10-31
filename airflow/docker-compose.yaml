@@ -62,3 +62,8 @@ services:
     !!merge <<: *airflow-common
     command: scheduler
     restart: always
+
+networks:
+  default:
+    external: true
+    name: hybrid-mlops-demo_default

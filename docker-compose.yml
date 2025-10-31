@@ -6,23 +6,85 @@ services:
       dockerfile: Dockerfile
     image: daeun/ray-inference:cu116
     ports:
-    - target: 8000
-      published: '8000'
-      protocol: tcp
-      mode: ingress
+      - target: 8000
+        published: '8000'
+        protocol: tcp
+        mode: ingress
     gpus:
-    - count: -1
+      - count: -1
     shm_size: 8g
     healthcheck:
       test:
-      - CMD
-      - curl
-      - -sf
-      - http://127.0.0.1:8000/inference/healthz
+        - CMD
+        - curl
+        - -sf
+        - http://127.0.0.1:8000/inference/healthz
       interval: 5s
       timeout: 2s
       retries: 60
       start_period: 30s
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U airflow
+      interval: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - default
+  airflow-webserver:
+    image: apache/airflow:2.9.2
+    container_name: airflow-webserver
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: 1xZm7gbPA-QYl6NTxZcG9ZbhoGmLKWWahCXlNnadzXE=
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
+      AIRFLOW__CORE__LOAD_EXAMPLES: "true"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    ports:
+      - 8080:8080
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8080/health
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    command: webserver
+    networks:
+      - default
+  airflow-scheduler:
+    image: apache/airflow:2.9.2
+    container_name: airflow-scheduler
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: 1xZm7gbPA-QYl6NTxZcG9ZbhoGmLKWWahCXlNnadzXE=
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+    command: scheduler
+    networks:
+      - default
 networks:
   default:
     name: hybrid-mlops-demo_default
+volumes:
+  postgres-db-volume: {}

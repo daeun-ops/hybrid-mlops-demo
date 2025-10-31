@@ -1,0 +1,22 @@
+[2025-10-31T10:02:18.700+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-10-31T10:02:18.720+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: s3_camera_to_infer.wait_s3_latest_jpg manual__2025-10-31T10:02:17+00:00 [queued]>
+[2025-10-31T10:02:18.727+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: s3_camera_to_infer.wait_s3_latest_jpg manual__2025-10-31T10:02:17+00:00 [queued]>
+[2025-10-31T10:02:18.727+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 1
+[2025-10-31T10:02:18.739+0000] {taskinstance.py:2330} INFO - Executing <Task(S3KeySensor): wait_s3_latest_jpg> on 2025-10-31 10:02:17+00:00
+[2025-10-31T10:02:18.746+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 's3_camera_to_infer', 'wait_s3_latest_jpg', 'manual__2025-10-31T10:02:17+00:00', '--job-id', '8', '--raw', '--subdir', 'DAGS_FOLDER/s3_camera_to_infer.py', '--cfg-path', '/tmp/tmpw4h_91mc']
+[2025-10-31T10:02:18.749+0000] {standard_task_runner.py:91} INFO - Job 8: Subtask wait_s3_latest_jpg
+[2025-10-31T10:02:18.752+0000] {logging_mixin.py:188} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61 DeprecationWarning: This process (pid=739) is multi-threaded, use of fork() may lead to deadlocks in the child.
+[2025-10-31T10:02:18.752+0000] {standard_task_runner.py:63} INFO - Started process 740 to run task
+[2025-10-31T10:02:18.805+0000] {task_command.py:426} INFO - Running <TaskInstance: s3_camera_to_infer.wait_s3_latest_jpg manual__2025-10-31T10:02:17+00:00 [running]> on host 32f37ff5877d
+[2025-10-31T10:02:18.902+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='sophie' AIRFLOW_CTX_DAG_ID='s3_camera_to_infer' AIRFLOW_CTX_TASK_ID='wait_s3_latest_jpg' AIRFLOW_CTX_EXECUTION_DATE='2025-10-31T10:02:17+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-10-31T10:02:17+00:00'
+[2025-10-31T10:02:18.902+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-10-31T10:02:18.916+0000] {baseoperator.py:400} WARNING - S3KeySensor.execute cannot be called outside TaskInstance!
+[2025-10-31T10:02:18.916+0000] {s3.py:117} INFO - Poking for key : s3://camera/latest.jpg
+[2025-10-31T10:02:18.939+0000] {base.py:84} INFO - Using connection ID 'minio_s3' for task execution.
+[2025-10-31T10:02:18.940+0000] {connection_wrapper.py:387} INFO - AWS Connection (conn_id='minio_s3', conn_type='aws') credentials retrieved from extra.
+[2025-10-31T10:02:19.245+0000] {base.py:294} INFO - Success criteria met. Exiting.
+[2025-10-31T10:02:19.245+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-10-31T10:02:19.257+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=s3_camera_to_infer, task_id=wait_s3_latest_jpg, run_id=manual__2025-10-31T10:02:17+00:00, execution_date=20251031T100217, start_date=20251031T100218, end_date=20251031T100219
+[2025-10-31T10:02:19.291+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2025-10-31T10:02:19.317+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2025-10-31T10:02:19.319+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
