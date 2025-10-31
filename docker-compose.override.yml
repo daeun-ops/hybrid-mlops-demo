@@ -1,0 +1,62 @@
+services:
+  ray-inference:
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8000/inference/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - ./images:/images:rw
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "minioadmin"
+      MINIO_ROOT_PASSWORD: "minioadmin123"
+    volumes:
+      - ./data/minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: prometheus
+    command: ["--config.file=/etc/prometheus/prometheus.yml","--storage.tsdb.retention.time=2d"]
+    ports: ["9090:9090"]
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/-/healthy"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  grafana:
+    image: grafana/grafana:10.4.6
+    container_name: grafana
+    ports: ["3000:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+      start_period: 15s

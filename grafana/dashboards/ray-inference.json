@@ -1,0 +1,20 @@
+{
+  "title": "Ray Inference - Quick View",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Requests (total)",
+      "gridPos": {"x":0,"y":0,"w":6,"h":6},
+      "targets": [{"expr":"inference_requests_total{service=\"ray-inference\"}"}]
+    },
+    {
+      "type": "graph",
+      "title": "Avg Latency (s)",
+      "gridPos": {"x":6,"y":0,"w":18,"h":6},
+      "targets": [{"expr":"inference_avg_latency_seconds{service=\"ray-inference\"}"}]
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}

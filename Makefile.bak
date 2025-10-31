@@ -1,0 +1,33 @@
+.PHONY: up down health infer gpu logs restart clean ps
+
+up:
+\tdocker compose up -d --build ray-inference
+\t@echo "⏳ Waiting for health..."; \\
+\tfor i in {1..45}; do s=$$(docker inspect -f '{{.State.Health.Status}}' ray-inference 2>/dev/null || echo unknown); \\
+\t  if [ "$$s" = "healthy" ]; then echo "✅ Container is healthy."; break; fi; sleep 2; done
+\t@$(MAKE) infer
+
+down:
+\tdocker compose down --remove-orphans || true
+
+health:
+\t@echo -n "Health: " && curl -s http://127.0.0.1:8000/inference/healthz && echo
+
+infer:
+\t@echo -n "Infer : " && curl -s -X POST http://127.0.0.1:8000/inference/ -H 'Content-Type: application/json' -d '{"input":[10,20,30,40]}' && echo
+
+gpu:
+\t@docker exec -i ray-inference python3 -c 'import torch,os;print("cuda_available:",torch.cuda.is_available());print("CUDA_VISIBLE_DEVICES:",os.environ.get("CUDA_VISIBLE_DEVICES"));print("device_name:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "N/A")'
+\t@docker exec -it ray-inference bash -lc "ray status" || true
+
+logs:
+\tdocker logs -n 200 -f ray-inference
+
+restart:
+\tdocker compose restart ray-inference
+
+clean:
+\tdocker builder prune -f || true
+
+ps:
+\tdocker compose ps
