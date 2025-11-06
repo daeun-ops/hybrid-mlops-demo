@@ -5,7 +5,24 @@ It focuses on connecting simple local components (Airflow, MinIO, Ray Serve) wit
 The goal is to understand how **data flow, orchestration, and observability** can work together across environments — even on a single developer laptop.
 
 ---
+### Local Hardware Environment
 
+All local workloads run on a developer laptop that simulates an **on-premise inference node** within a hybrid infrastructure.
+
+| Component | Description |
+| --- | --- |
+| **CPU** | 6-core (1.0 vCPU used during Ray tasks) |
+| **GPU** | NVIDIA GeForce RTX 2060 (CUDA 11.6 enabled) |
+| **Memory** | ~4.8 GiB usage / 32 GiB total |
+| **Inference Engine** | Ray Serve (`ray-inference:cu116`) |
+| **Monitoring** | Prometheus / Grafana metrics (e.g. `inference_requests_total`) |
+| **Health Checks** | `/inference/healthz`, `/inference/metrics` endpoints |
+
+In this setup, the laptop acts as a **physical on-premise node**—handling real GPU inference and exposing unified observability endpoints—while the cloud (EKS) side represents scalable compute resources for production or distributed workloads.
+
+
+
+---
 ## Project Overview
 
 The original version of this project was built as a small **local inference demo** using Docker Compose.  
