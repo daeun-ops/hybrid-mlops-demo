@@ -69,15 +69,15 @@ Simple to run and modify:
 | **Storage** | MinIO (S3 compatible local bucket) |
 | **Observability** | Prometheus + Grafana (custom /metrics endpoint and dashboards) |
 | **Automation** | Docker Compose, Makefile, .env / .env.example, pre-commit guard |
-| **Optional Cloud Extension** | AWS EKS, Terraform, Helm for scaling and FinOps demo |
+| **Cloud Extension** | AWS EKS, Terraform, Helm for scaling and FinOps demo |
 
 ---
 
 ## Project Board
 
-All current progress and planned tasks are tracked on the public GitHub project board:
+All current progress and planned tasks are tracked on the public GitHub project board
 
-**[View Project Dashboard → daeun-ops / Hybrid MLOps Project](https://github.com/users/daeun-ops/projects/2)**
+**[View Project Dashboard → daeun-ops / Hybrid MLOps Project](https://github.com/users/daeun-ops/projects/4)**
 
 The board records all small, granular tasks — reflecting day-to-day progress, experiments, and validation notes.
 
