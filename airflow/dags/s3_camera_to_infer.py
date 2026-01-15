@@ -1,36 +1,40 @@
-from datetime import datetime
+# airflow/dags/s3_camera_to_infer.py
+# -------------------------------
 from airflow import DAG
-from airflow.operators.bash import BashOperator
 from airflow.providers.amazon.aws.sensors.s3 import S3KeySensor
+from airflow.operators.http_operator import SimpleHttpOperator
+from datetime import datetime, timedelta
 
-RAY_ENDPOINT = "http://ray-inference:8000/inference/"
+default_args = {
+    "owner": "sophie",
+    "retries": 1,
+    "retry_delay": timedelta(minutes=1),
+}
 
 with DAG(
-    dag_id="s3_camera_to_infer",
-    start_date=datetime(2025, 10, 31),
+    "s3_camera_to_infer",
+    default_args=default_args,
+    start_date=datetime(2025, 11, 1),
     schedule_interval="@once",
     catchup=False,
-    default_args={"owner": "sophie"},
+    description="Detect new image in MinIO and trigger Ray Serve inference",
 ) as dag:
 
-    wait_image = S3KeySensor(
-        task_id="wait_image",
+    wait_for_image = S3KeySensor(
+        task_id="wait_s3_latest_jpg",
+        bucket_key="camera/*.jpg",
         bucket_name="camera",
-        bucket_key="latest.jpg",
         aws_conn_id="minio_s3",
-        poke_interval=5,
-        timeout=60*10,
-        soft_fail=False,
+        poke_interval=30,
     )
 
-    call_infer = BashOperator(
-        task_id="call_infer",
-        bash_command=(
-            "curl -s -X POST {{ params.endpoint }} "
-            "-H 'Content-Type: application/json' "
-            "--data '{\"input\":[10,20,30,40]}'"
-        ),
-        params={"endpoint": RAY_ENDPOINT}
+    trigger_inference = SimpleHttpOperator(
+        task_id="call_ray_infer",
+        http_conn_id="ray_inference",
+        endpoint="/inference",
+        method="POST",
+        headers={"Content-Type": "application/json"},
+        data='{"trigger": "s3_camera_event"}',
     )
 
-    wait_image >> call_infer
+    wait_for_image >> trigger_inference

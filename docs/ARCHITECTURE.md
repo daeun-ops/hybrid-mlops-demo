@@ -81,3 +81,29 @@ Camera / Mock Image → MinIO (S3 folder)
 
 ---
 
+
+# Hybrid MLOps Architecture (Lightweight Version)
+
+This project demonstrates a hybrid inference and observability workflow:
+
+1. **Local Sensor Simulation (MinIO)**
+   - Camera images are uploaded to a local S3 bucket.
+   - Airflow detects file events using `S3KeySensor`.
+
+2. **Orchestration (Airflow)**
+   - DAG triggers Ray Serve inference API.
+   - Same DAG can be reused for EKS endpoints.
+
+3. **Inference (Ray Serve)**
+   - Lightweight FastAPI-based Ray Serve deployment.
+   - Switchable between GPU/CPU.
+
+4. **Observability**
+   - Prometheus scrapes metrics from Ray Serve.
+   - Grafana visualizes latency, requests, and custom GPU activity.
+
+5. **Scalability (Future Extension)**
+   - Optional EKS setup with Terraform + Helm for distributed inference.
+
+> Local and Cloud share the same logical flow — only endpoints differ.
+
