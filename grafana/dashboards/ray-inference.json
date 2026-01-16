@@ -15,6 +15,6 @@
       "targets": [{"expr":"inference_avg_latency_seconds{service=\"ray-inference\"}"}]
     }
   ],
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "version": 1
 }
